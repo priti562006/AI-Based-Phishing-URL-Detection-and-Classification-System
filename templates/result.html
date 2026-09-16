@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Scan Result - Phishing URL Detector</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">🛡️</div>
+
+        <h2>Phishing Detector</h2>
+
+        <a href="{{ url_for('home') }}">
+            🏠 Home
+        </a>
+
+        <a href="{{ url_for('home') }}">
+            🔍 Scan URL
+        </a>
+
+        <a href="{{ url_for('history') }}">
+            📜 Scan History
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">
+            📊 Dashboard
+        </a>
+
+        <a href="{{ url_for('performance') }}">
+            📈 Performance
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            🚪 Logout
+        </a>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+
+            <div>
+                <h2>URL Scan Result</h2>
+                <p>AI-Based Phishing URL Detection</p>
+            </div>
+
+            <div class="user-info">
+                👤 {{ session.get("username", "admin") }}
+            </div>
+
+        </div>
+
+
+        <!-- RESULT CONTAINER -->
+        <div class="result-container">
+
+
+            <!-- RESULT HEADER -->
+            {% if result == "PHISHING" %}
+
+            <div class="result-header phishing-result">
+
+                <div>
+                    <span class="result-icon">🚨</span>
+
+                    <div>
+                        <h1>PHISHING URL DETECTED</h1>
+                        <p>This URL shows suspicious phishing characteristics.</p>
+                    </div>
+                </div>
+
+                <div class="score">
+                    {{ score }}
+                    <small>/ 100</small>
+                </div>
+
+            </div>
+
+
+            {% elif result == "SUSPICIOUS" %}
+
+            <div class="result-header suspicious-result">
+
+                <div>
+                    <span class="result-icon">⚠️</span>
+
+                    <div>
+                        <h1>SUSPICIOUS URL</h1>
+                        <p>This URL requires further attention.</p>
+                    </div>
+                </div>
+
+                <div class="score">
+                    {{ score }}
+                    <small>/ 100</small>
+                </div>
+
+            </div>
+
+
+            {% else %}
+
+            <div class="result-header legitimate-result">
+
+                <div>
+                    <span class="result-icon">✅</span>
+
+                    <div>
+                        <h1>LEGITIMATE URL</h1>
+                        <p>No major suspicious patterns were detected.</p>
+                    </div>
+                </div>
+
+                <div class="score">
+                    {{ score }}
+                    <small>/ 100</small>
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- SCANNED URL -->
+            <div class="url-display">
+
+                <h3>🔗 Scanned URL</h3>
+
+                <div class="url-box">
+                    {{ url }}
+                </div>
+
+            </div>
+
+
+            <!-- RISK ASSESSMENT -->
+            <div class="analysis-section">
+
+                <h2>🚦 Risk Assessment</h2>
+
+                <div class="risk-info">
+
+                    <span>Risk Level</span>
+
+                    <strong class="{{ risk_color }}">
+                        {{ risk_level }}
+                    </strong>
+
+                </div>
+
+                <div class="risk-bar">
+
+                    <div
+                        id="riskProgress"
+                        class="risk-progress {{ risk_color }}"
+                        data-score="{{ score }}">
+                    </div>
+
+                </div>
+
+                <p class="risk-message">
+                    {{ risk_message }}
+                </p>
+
+            </div>
+
+
+            <!-- SECURITY CHECKS -->
+            <div class="analysis-section">
+
+                <h2>🛡️ Security Checks</h2>
+
+                <div class="security-grid">
+
+                    {% for check, status in security_checks.items() %}
+
+                    <div class="security-card">
+
+                        <div class="security-name">
+                            {{ check }}
+                        </div>
+
+                        {% if status == "PASS" %}
+
+                        <span class="check-pass">
+                            ✅ PASS
+                        </span>
+
+                        {% elif status == "WARNING" %}
+
+                        <span class="check-warning">
+                            ⚠️ WARNING
+                        </span>
+
+                        {% else %}
+
+                        <span class="check-fail">
+                            ❌ FAIL
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- URL DETAILS -->
+            <div class="analysis-section">
+
+                <h2>🔎 Detailed URL Analysis</h2>
+
+                <div class="details-grid">
+
+                    {% for detail, value in url_details.items() %}
+
+                    <div class="detail-card">
+
+                        <span>
+                            {{ detail }}
+                        </span>
+
+                        <strong>
+                            {{ value }}
+                        </strong>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- DETECTION REASONS -->
+            <div class="analysis-section">
+
+                <h2>📋 Detection Reasons</h2>
+
+                <div class="reason-box">
+
+                    {% if reasons %}
+
+                    <ul class="reason-list">
+
+                        {% for reason in reasons %}
+
+                        <li>
+                            ⚠️ {{ reason }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    {% else %}
+
+                    <p class="safe-message">
+                        ✅ No suspicious patterns were detected.
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+            <div class="result-buttons">
+
+                <a
+                    href="/download_report?url={{ url }}&result={{ result }}&score={{ score }}&risk_level={{ risk_level }}&risk_message={{ risk_message }}{% for reason in reasons %}&reason={{ reason }}{% endfor %}"
+                    class="pdf-button">
+
+                    📄 Download PDF Report
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="scan-again">
+
+                    🔍 Scan Another URL
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('history') }}"
+                    class="history-button">
+
+                    📋 View Scan History
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const riskProgress =
+    document.getElementById("riskProgress");
+
+if (riskProgress) {
+
+    const riskScore =
+        Number(riskProgress.dataset.score);
+
+    setTimeout(() => {
+        riskProgress.style.width =
+            Math.min(riskScore, 100) + "%";
+    }, 200);
+
+}
+
+</script>
+
+</body>
+</html>

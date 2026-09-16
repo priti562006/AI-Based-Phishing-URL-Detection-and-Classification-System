@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Model Performance</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="sidebar-logo">🛡️</div>
+
+    <h2>Phishing Detector</h2>
+
+    <a href="{{ url_for('home') }}">🏠 Home</a>
+
+    <a href="{{ url_for('history') }}">
+        📜 Scan History
+    </a>
+
+    <a href="{{ url_for('dashboard') }}">
+        📊 Dashboard
+    </a>
+
+    <a href="{{ url_for('performance') }}">
+        📈 Performance
+    </a>
+
+    <a href="{{ url_for('logout') }}">
+        🚪 Logout
+    </a>
+
+</div>
+
+
+<div class="main-content">
+
+    <div class="topbar">
+
+        <span>Model Performance</span>
+
+        <span>
+            👤 {{ session.get("username", "admin") }}
+        </span>
+
+    </div>
+
+
+    <div class="dashboard-container">
+
+        <h1>📈 Model Performance</h1>
+
+        <p>
+            Performance analysis of the phishing URL
+            classification system.
+        </p>
+
+
+        <!-- PERFORMANCE CARDS -->
+
+        <div class="dashboard-cards">
+
+            <div class="dashboard-card">
+
+                <h3>Accuracy</h3>
+
+                <h2>
+                    {{ accuracy }}%
+                </h2>
+
+                <p>
+                    Overall test accuracy
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <h3>Precision</h3>
+
+                <h2>
+                    {{ macro_precision }}%
+                </h2>
+
+                <p>
+                    Macro average precision
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <h3>Recall</h3>
+
+                <h2>
+                    {{ macro_recall }}%
+                </h2>
+
+                <p>
+                    Macro average recall
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <h3>F1 Score</h3>
+
+                <h2>
+                    {{ macro_f1 }}%
+                </h2>
+
+                <p>
+                    Macro average F1 score
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- CLASSIFICATION REPORT -->
+
+        <div class="chart-card"
+             style="margin-top:25px;">
+
+            <h2>
+                📊 Classification Report
+            </h2>
+
+            <div class="history-table-container">
+
+                <table class="history-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Class</th>
+
+                            <th>Precision</th>
+
+                            <th>Recall</th>
+
+                            <th>F1 Score</th>
+
+                            <th>Support</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in metrics %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ item.class }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ item.precision }}%
+                            </td>
+
+                            <td>
+                                {{ item.recall }}%
+                            </td>
+
+                            <td>
+                                {{ item.f1_score }}%
+                            </td>
+
+                            <td>
+                                {{ item.support }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+
+                        <tr>
+
+                            <td>
+                                <strong>Macro Average</strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ macro_precision }}%
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ macro_recall }}%
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ macro_f1 }}%
+                                </strong>
+                            </td>
+
+                            <td>
+                                16
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONFUSION MATRIX -->
+
+        <div class="chart-card"
+             style="margin-top:25px;">
+
+            <h2>
+                🔢 Confusion Matrix
+            </h2>
+
+            <div class="history-table-container">
+
+                <table class="history-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Actual / Predicted</th>
+
+                            <th>Phishing</th>
+
+                            <th>Suspicious</th>
+
+                            <th>Legitimate</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr>
+
+                            <th>Phishing</th>
+
+                            <td>
+                                {{ confusion_matrix[0][0] }}
+                            </td>
+
+                            <td>
+                                {{ confusion_matrix[0][1] }}
+                            </td>
+
+                            <td>
+                                {{ confusion_matrix[0][2] }}
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>Suspicious</th>
+
+                            <td>
+                                {{ confusion_matrix[1][0] }}
+                            </td>
+
+                            <td>
+                                {{ confusion_matrix[1][1] }}
+                            </td>
+
+                            <td>
+                                {{ confusion_matrix[1][2] }}
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>Legitimate</th>
+
+                            <td>
+                                {{ confusion_matrix[2][0] }}
+                            </td>
+
+                            <td>
+                                {{ confusion_matrix[2][1] }}
+                            </td>
+
+                            <td>
+                                {{ confusion_matrix[2][2] }}
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- INFORMATION -->
+
+        <div class="dashboard-summary"
+             style="margin-top:25px;">
+
+            <h2>
+                📌 Performance Information
+            </h2>
+
+            <div class="summary-item">
+
+                <strong>Accuracy:</strong>
+
+                {{ accuracy }}%
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <strong>Precision:</strong>
+
+                {{ macro_precision }}%
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <strong>Recall:</strong>
+
+                {{ macro_recall }}%
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <strong>F1 Score:</strong>
+
+                {{ macro_f1 }}%
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <strong>Classification:</strong>
+
+                Phishing, Suspicious, Legitimate
+
+            </div>
+
+        </div>
+
+
+        <!-- NOTE -->
+
+        <div class="safe-message"
+             style="margin-top:25px;">
+
+            ℹ️ These performance values are calculated
+            from the current test confusion matrix used
+            by the project.
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

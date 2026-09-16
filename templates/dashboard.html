@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - Phishing URL Detector</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            🛡️ Phishing URL Detector
+        </div>
+
+        <a href="/" class="nav">
+            ⌂ Home
+        </a>
+
+        <a href="/" class="nav">
+            🔍 Scan URL
+        </a>
+
+        <a href="/history" class="nav">
+            📋 History
+        </a>
+
+        <a href="/dashboard" class="nav active">
+            📊 Dashboard
+        </a>
+
+        <a href="/performance" class="nav">
+            📈 Performance
+        </a>
+
+        <a href="/logout" class="logout">
+            ⇥ Logout
+        </a>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+
+        <div class="topbar">
+
+            <span>
+                📊 Security Dashboard
+            </span>
+
+            <span>
+                👤 {{ session.get("username", "admin") }}
+            </span>
+
+        </div>
+
+
+        <div class="dashboard-container">
+
+            <!-- ================= HEADING ================= -->
+
+            <div class="dashboard-heading">
+
+                <h1>
+                    Phishing Detection Dashboard
+                </h1>
+
+                <p>
+                    Overview of URL scanning and classification results
+                </p>
+
+            </div>
+
+
+            <!-- ================= STAT CARDS ================= -->
+
+            <div class="dashboard-cards">
+
+                <!-- TOTAL -->
+
+                <div class="dashboard-card total-card">
+
+                    <div class="card-icon">
+                        🔍
+                    </div>
+
+                    <div class="card-info">
+
+                        <h3>
+                            Total Scans
+                        </h3>
+
+                        <strong>
+                            {{ total }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PHISHING -->
+
+                <div class="dashboard-card phishing-card">
+
+                    <div class="card-icon">
+                        🚨
+                    </div>
+
+                    <div class="card-info">
+
+                        <h3>
+                            Phishing
+                        </h3>
+
+                        <strong>
+                            {{ phishing }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SUSPICIOUS -->
+
+                <div class="dashboard-card suspicious-card">
+
+                    <div class="card-icon">
+                        ⚠️
+                    </div>
+
+                    <div class="card-info">
+
+                        <h3>
+                            Suspicious
+                        </h3>
+
+                        <strong>
+                            {{ suspicious }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LEGITIMATE -->
+
+                <div class="dashboard-card legitimate-card">
+
+                    <div class="card-icon">
+                        ✅
+                    </div>
+
+                    <div class="card-info">
+
+                        <h3>
+                            Legitimate
+                        </h3>
+
+                        <strong>
+                            {{ legitimate }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= CHARTS ================= -->
+
+            <div class="dashboard-charts">
+
+
+                <!-- DOUGHNUT CHART -->
+
+                <div class="chart-card">
+
+                    <h2>
+                        🍩 Classification Distribution
+                    </h2>
+
+                    <div class="chart-wrapper">
+
+                        <canvas
+                            id="classificationChart">
+                        </canvas>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BAR CHART -->
+
+                <div class="chart-card">
+
+                    <h2>
+                        📊 Scan Results
+                    </h2>
+
+                    <div class="chart-wrapper">
+
+                        <canvas
+                            id="resultsChart">
+                        </canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= SUMMARY ================= -->
+
+            <div class="dashboard-summary">
+
+                <h2>
+                    📋 Scan Summary
+                </h2>
+
+
+                <div class="summary-grid">
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Total URLs Scanned
+                        </span>
+
+                        <strong>
+                            {{ total }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Phishing URLs
+                        </span>
+
+                        <strong>
+                            {{ phishing }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Suspicious URLs
+                        </span>
+
+                        <strong>
+                            {{ suspicious }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Legitimate URLs
+                        </span>
+
+                        <strong>
+                            {{ legitimate }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= QUICK ACTIONS ================= -->
+
+            <div class="quick-actions">
+
+                <h2>
+                    ⚡ Quick Actions
+                </h2>
+
+                <div class="action-buttons">
+
+                    <a href="/" class="dashboard-action scan-action">
+                        🔍 Scan New URL
+                    </a>
+
+                    <a href="/history" class="dashboard-action history-action">
+                        📋 View History
+                    </a>
+
+                    <a href="/performance" class="dashboard-action performance-action">
+                        📈 Model Performance
+                    </a>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- ================= DATA FOR JAVASCRIPT ================= -->
+
+<div
+    id="dashboardData"
+    data-phishing="{{ phishing }}"
+    data-suspicious="{{ suspicious }}"
+    data-legitimate="{{ legitimate }}">
+</div>
+
+
+<!-- ================= CHART SCRIPT ================= -->
+
+<script>
+
+    const dashboardData =
+        document.getElementById("dashboardData");
+
+
+    const phishingCount =
+        Number(
+            dashboardData.dataset.phishing
+        );
+
+
+    const suspiciousCount =
+        Number(
+            dashboardData.dataset.suspicious
+        );
+
+
+    const legitimateCount =
+        Number(
+            dashboardData.dataset.legitimate
+        );
+
+
+    // =========================================
+    // DOUGHNUT CHART
+    // =========================================
+
+    new Chart(
+        document.getElementById(
+            "classificationChart"
+        ),
+        {
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+                    "Phishing",
+                    "Suspicious",
+                    "Legitimate"
+                ],
+
+                datasets: [
+                    {
+                        data: [
+                            phishingCount,
+                            suspiciousCount,
+                            legitimateCount
+                        ]
+                    }
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        position: "bottom"
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+
+    // =========================================
+    // BAR CHART
+    // =========================================
+
+    new Chart(
+        document.getElementById(
+            "resultsChart"
+        ),
+        {
+            type: "bar",
+
+            data: {
+
+                labels: [
+                    "Phishing",
+                    "Suspicious",
+                    "Legitimate"
+                ],
+
+                datasets: [
+                    {
+                        label: "Number of Scans",
+
+                        data: [
+                            phishingCount,
+                            suspiciousCount,
+                            legitimateCount
+                        ]
+                    }
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                scales: {
+
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

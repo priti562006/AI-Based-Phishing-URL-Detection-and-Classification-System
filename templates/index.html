@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Phishing URL Detection</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="sidebar-logo">🛡️</div>
+
+    <h2>Phishing Detector</h2>
+
+    <a href="{{ url_for('home') }}">🏠 Home</a>
+    <a href="{{ url_for('history') }}">📜 Scan History</a>
+    <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('performance') }}">📈 Performance</a>
+    <a href="{{ url_for('logout') }}">🚪 Logout</a>
+
+</div>
+
+
+<div class="main-content">
+
+    <div class="topbar">
+
+        <span>🔐 URL Security Scanner</span>
+
+        <span>
+            👤 {{ session.get("username", "admin") }}
+        </span>
+
+    </div>
+
+
+    <div class="home-page">
+
+        <!-- HERO SECTION -->
+
+        <div class="hero-section">
+
+            <div class="hero-icon">
+                🔎
+            </div>
+
+            <h1>
+                Phishing URL Detection
+            </h1>
+
+            <p>
+                Protect yourself from malicious websites by checking
+                suspicious URLs before you click.
+            </p>
+
+            <div class="classification-text">
+
+                <span class="phishing-text">
+                    🔴 Phishing
+                </span>
+
+                <span>•</span>
+
+                <span class="suspicious-text">
+                    🟠 Suspicious
+                </span>
+
+                <span>•</span>
+
+                <span class="legitimate-text">
+                    🟢 Legitimate
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- SCANNER CARD -->
+
+        <div class="scanner-card">
+
+            <div class="scanner-title">
+
+                <div class="scanner-small-icon">
+                    🛡️
+                </div>
+
+                <div>
+                    <h2>Scan a URL</h2>
+
+                    <p>
+                        Enter the website URL you want to analyze
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form method="POST"
+                  action="{{ url_for('scan') }}">
+
+                <div class="url-input-wrapper">
+
+                    <span>🌐</span>
+
+                    <input
+                        type="text"
+                        name="url"
+                        placeholder="Enter URL e.g. https://example.com"
+                        required>
+
+                </div>
+
+
+                <button type="submit"
+                        class="scan-button">
+
+                    🔍
+                    <span>Scan URL</span>
+
+                </button>
+
+            </form>
+
+
+            <div class="scan-tip">
+
+                💡 <b>Tip:</b>
+                Always verify a website before entering
+                passwords or personal information.
+
+            </div>
+
+        </div>
+
+
+        <!-- FEATURE CARDS -->
+
+        <div class="feature-heading">
+
+            <h2>Why Use Our URL Detector?</h2>
+
+            <p>
+                Analyze important security indicators of a website
+            </p>
+
+        </div>
+
+
+        <div class="feature-cards">
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon blue-icon">
+                    🛡️
+                </div>
+
+                <h3>
+                    Phishing Detection
+                </h3>
+
+                <p>
+                    Detect suspicious URL patterns and
+                    identify potential phishing websites.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon orange-icon">
+                    🔐
+                </div>
+
+                <h3>
+                    Security Analysis
+                </h3>
+
+                <p>
+                    Analyze HTTPS, IP address, special
+                    characters and suspicious keywords.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon green-icon">
+                    📊
+                </div>
+
+                <h3>
+                    Risk Score
+                </h3>
+
+                <p>
+                    Get a risk score that helps classify
+                    the URL as safe or potentially dangerous.
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- BOTTOM INFO -->
+
+        <div class="security-banner">
+
+            <div class="banner-icon">
+                🔒
+            </div>
+
+            <div>
+
+                <h3>
+                    Think Before You Click
+                </h3>
+
+                <p>
+                    Stay alert and protect your personal information
+                    from online threats.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

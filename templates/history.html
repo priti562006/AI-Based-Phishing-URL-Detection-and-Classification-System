@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Scan History - Phishing URL Detector</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">🛡️</div>
+
+        <h2>Phishing Detector</h2>
+
+        <a href="{{ url_for('home') }}">
+            🏠 Home
+        </a>
+
+        <a href="{{ url_for('home') }}">
+            🔍 Scan URL
+        </a>
+
+        <a href="{{ url_for('history') }}" class="active">
+            📜 Scan History
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">
+            📊 Dashboard
+        </a>
+
+        <a href="{{ url_for('performance') }}">
+            📈 Performance
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            🚪 Logout
+        </a>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+
+            <div>
+                <h2>📋 Scan History</h2>
+                <p>Previously scanned URLs and their results</p>
+            </div>
+
+            <div class="user-info">
+                👤 {{ session.get("username", "admin") }}
+            </div>
+
+        </div>
+
+
+        <!-- HISTORY CONTAINER -->
+        <div class="history-container">
+
+            <div class="history-heading">
+
+                <div>
+                    <h1>Scan History</h1>
+
+                    <p>
+                        View, search and filter your previously scanned URLs.
+                    </p>
+                </div>
+
+                <div class="history-count">
+                    📊 {{ history|length }} Scans
+                </div>
+
+            </div>
+
+
+            <!-- SEARCH & FILTER -->
+            <div class="history-tools">
+
+                <div class="search-wrapper">
+
+                    🔍
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search URL..."
+                        onkeyup="filterHistory()">
+
+                </div>
+
+
+                <select
+                    id="resultFilter"
+                    onchange="filterHistory()">
+
+                    <option value="ALL">
+                        All Results
+                    </option>
+
+                    <option value="PHISHING">
+                        🚨 Phishing
+                    </option>
+
+                    <option value="SUSPICIOUS">
+                        ⚠️ Suspicious
+                    </option>
+
+                    <option value="LEGITIMATE">
+                        ✅ Legitimate
+                    </option>
+
+                </select>
+
+
+                <button
+                    type="button"
+                    class="clear-filter"
+                    onclick="clearFilters()">
+
+                    ✖ Clear Filter
+
+                </button>
+
+
+                <form
+                    method="POST"
+                   action="{{ url_for('clear_history_route') }}"
+                    onsubmit="return confirm('Are you sure you want to delete all scan history?');">
+
+                    <button
+                        type="submit"
+                        class="delete-history">
+
+                        🗑️ Clear History
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- HISTORY TABLE -->
+            <div class="history-table-container">
+
+                <table
+                    class="history-table"
+                    id="historyTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>No.</th>
+
+                            <th>🔗 URL</th>
+
+                            <th>Classification</th>
+
+                            <th>Risk Score</th>
+
+                            <th>📅 Scan Date</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for scan in history %}
+
+                        <tr>
+
+                            <td class="serial-number">
+                                {{ loop.index }}
+                            </td>
+
+
+                            <td class="history-url">
+                                {{ scan[1] }}
+                            </td>
+
+
+                            <td>
+
+                                {% if scan[2] == "PHISHING" %}
+
+                                <span class="history-badge phishing-badge">
+                                    🚨 PHISHING
+                                </span>
+
+                                {% elif scan[2] == "SUSPICIOUS" %}
+
+                                <span class="history-badge suspicious-badge">
+                                    ⚠️ SUSPICIOUS
+                                </span>
+
+                                {% else %}
+
+                                <span class="history-badge legitimate-badge">
+                                    ✅ LEGITIMATE
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <strong class="history-score">
+                                    {{ scan[3] }} / 100
+                                </strong>
+
+                            </td>
+
+
+                            <td class="scan-date">
+                                {{ scan[4] }}
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <tr id="noHistory">
+
+                            <td
+                                colspan="5"
+                                class="no-history">
+
+                                📭 No scan history available.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- NO SEARCH RESULT -->
+            <div
+                id="noSearchResult"
+                class="no-search-result">
+
+                🔍 No matching scan found.
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+function filterHistory() {
+
+    const searchInput =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    const resultFilter =
+        document.getElementById("resultFilter")
+        .value;
+
+    const table =
+        document.getElementById("historyTable");
+
+    const rows =
+        table
+        .getElementsByTagName("tbody")[0]
+        .getElementsByTagName("tr");
+
+    let visibleRows = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+
+        const row = rows[i];
+
+        if (row.id === "noHistory") {
+            continue;
+        }
+
+        const url =
+            row.cells[1]
+            .textContent
+            .toLowerCase();
+
+        const result =
+            row.cells[2]
+            .textContent
+            .toUpperCase();
+
+        const searchMatch =
+            url.includes(searchInput);
+
+        const filterMatch =
+            resultFilter === "ALL" ||
+            result.includes(resultFilter);
+
+        if (searchMatch && filterMatch) {
+
+            row.style.display = "";
+            visibleRows++;
+
+        } else {
+
+            row.style.display = "none";
+
+        }
+    }
+
+    const noSearchResult =
+        document.getElementById("noSearchResult");
+
+    if (visibleRows === 0 &&
+        rows.length > 0 &&
+        rows[0].id !== "noHistory") {
+
+        noSearchResult.style.display = "block";
+
+    } else {
+
+        noSearchResult.style.display = "none";
+
+    }
+}
+
+
+function clearFilters() {
+
+    document.getElementById("searchInput").value = "";
+
+    document.getElementById("resultFilter").value = "ALL";
+
+    filterHistory();
+
+}
+
+</script>
+
+</body>
+</html>
