@@ -23,7 +23,9 @@
 
     <h2>Phishing Detector</h2>
 
-    <a href="{{ url_for('home') }}">🏠 Home</a>
+    <a href="{{ url_for('home') }}">
+        🏠 Home
+    </a>
 
     <a href="{{ url_for('history') }}">
         📜 Scan History
@@ -37,10 +39,6 @@
         📈 Performance
     </a>
 
-    <a href="{{ url_for('logout') }}">
-        🚪 Logout
-    </a>
-
 </div>
 
 
@@ -49,10 +47,6 @@
     <div class="topbar">
 
         <span>Model Performance</span>
-
-        <span>
-            👤 {{ session.get("username", "admin") }}
-        </span>
 
     </div>
 
@@ -186,7 +180,7 @@
                             </td>
 
                             <td>
-                                {{ item.f1_score }}%
+                                {{ item.f1 }}%
                             </td>
 
                             <td>

@@ -42,10 +42,6 @@
             📈 Performance
         </a>
 
-        <a href="{{ url_for('logout') }}">
-            🚪 Logout
-        </a>
-
     </aside>
 
 
@@ -58,10 +54,6 @@
             <div>
                 <h2>URL Scan Result</h2>
                 <p>AI-Based Phishing URL Detection</p>
-            </div>
-
-            <div class="user-info">
-                👤 {{ session.get("username", "admin") }}
             </div>
 
         </div>
@@ -188,21 +180,21 @@
 
                 <div class="security-grid">
 
-                    {% for check, status in security_checks.items() %}
+                    {% for check in security_checks %}
 
                     <div class="security-card">
 
                         <div class="security-name">
-                            {{ check }}
+                            {{ check.name }}
                         </div>
 
-                        {% if status == "PASS" %}
+                        {% if check.status == "PASS" %}
 
                         <span class="check-pass">
                             ✅ PASS
                         </span>
 
-                        {% elif status == "WARNING" %}
+                        {% elif check.status == "WARNING" %}
 
                         <span class="check-warning">
                             ⚠️ WARNING

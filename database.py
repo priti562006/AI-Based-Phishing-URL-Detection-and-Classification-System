@@ -10,6 +10,7 @@ def create_database():
     conn = sqlite3.connect("scans.db")
     cursor = conn.cursor()
 
+    # Scan History Table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS scan_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,8 +21,64 @@ def create_database():
         )
     """)
 
+    # Users Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    """)
+
     conn.commit()
     conn.close()
+
+
+# =========================
+# REGISTER USER
+# =========================
+
+def register_user(username, password):
+
+    conn = sqlite3.connect("scans.db")
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            INSERT INTO users (username, password)
+            VALUES (?, ?)
+        """, (username, password))
+
+        conn.commit()
+        success = True
+
+    except sqlite3.IntegrityError:
+        success = False
+
+    conn.close()
+
+    return success
+
+
+# =========================
+# CHECK LOGIN
+# =========================
+
+def check_user(username, password):
+
+    conn = sqlite3.connect("scans.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT * FROM users
+        WHERE username = ? AND password = ?
+    """, (username, password))
+
+    user = cursor.fetchone()
+
+    conn.close()
+
+    return user
 
 
 # =========================
@@ -73,8 +130,6 @@ def get_statistics():
     conn = sqlite3.connect("scans.db")
     cursor = conn.cursor()
 
-
-    # Total Scans
     cursor.execute("""
         SELECT COUNT(*)
         FROM scan_history
@@ -82,8 +137,6 @@ def get_statistics():
 
     total = cursor.fetchone()[0]
 
-
-    # Phishing URLs
     cursor.execute("""
         SELECT COUNT(*)
         FROM scan_history
@@ -92,8 +145,6 @@ def get_statistics():
 
     phishing = cursor.fetchone()[0]
 
-
-    # Suspicious URLs
     cursor.execute("""
         SELECT COUNT(*)
         FROM scan_history
@@ -102,8 +153,6 @@ def get_statistics():
 
     suspicious = cursor.fetchone()[0]
 
-
-    # Legitimate URLs
     cursor.execute("""
         SELECT COUNT(*)
         FROM scan_history
@@ -112,12 +161,17 @@ def get_statistics():
 
     legitimate = cursor.fetchone()[0]
 
-
     conn.close()
 
-
     return total, phishing, suspicious, legitimate
+
+
+# =========================
+# CLEAR HISTORY
+# =========================
+
 def clear_history():
+
     conn = sqlite3.connect("scans.db")
     cursor = conn.cursor()
 

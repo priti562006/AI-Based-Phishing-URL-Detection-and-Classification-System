@@ -42,10 +42,6 @@
             📈 Performance
         </a>
 
-        <a href="{{ url_for('logout') }}">
-            🚪 Logout
-        </a>
-
     </aside>
 
 
@@ -58,10 +54,6 @@
             <div>
                 <h2>📋 Scan History</h2>
                 <p>Previously scanned URLs and their results</p>
-            </div>
-
-            <div class="user-info">
-                👤 {{ session.get("username", "admin") }}
             </div>
 
         </div>
@@ -138,7 +130,7 @@
 
                 <form
                     method="POST"
-                   action="{{ url_for('clear_history_route') }}"
+                    action="{{ url_for('clear_history_route') }}"
                     onsubmit="return confirm('Are you sure you want to delete all scan history?');">
 
                     <button

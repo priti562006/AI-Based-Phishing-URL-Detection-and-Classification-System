@@ -23,7 +23,6 @@
     <a href="{{ url_for('history') }}">📜 Scan History</a>
     <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
     <a href="{{ url_for('performance') }}">📈 Performance</a>
-    <a href="{{ url_for('logout') }}">🚪 Logout</a>
 
 </div>
 
@@ -33,10 +32,6 @@
     <div class="topbar">
 
         <span>🔐 URL Security Scanner</span>
-
-        <span>
-            👤 {{ session.get("username", "admin") }}
-        </span>
 
     </div>
 
